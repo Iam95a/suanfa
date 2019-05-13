@@ -1,10 +1,5 @@
 package com.chenq;
 
-import java.sql.ResultSet;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Queue;
-
 public class AvlNode {
 
     public AvlNode(Integer element) {
