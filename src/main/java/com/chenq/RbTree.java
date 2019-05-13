@@ -179,9 +179,105 @@ public class RbTree {
     }
 
     void deleteOneChild(int a, RBNode node) {
+        //todo  这个方法的前提是这个节点只有一个子节点  这些东西有点云里雾里 明天再说
+        RBNode child = node.left == null ? node.right : node.left;
+        if (node.getParent() == null && node.getLeft() == null && node.getRight() == null) {
+            //如果这个节点是跟节点 且左右子节点全部为空
+            node = null;
+            root = null;
+            return;
+        }
+        if (node.getParent() == null) {
+            //说明这个点是顶点  但是有子节点
+            node = null;
+            child.setParent(null);
+            root = child;
+            root.color = BLACK;
+            return;
+        }
 
+        if (node.getParent().getLeft() == node) {
+            //说明要删除的节点是父节点的左节点
+            //直接把子节点替换到父节点位置
+            node.getParent().setLeft(child);
+        } else {
+
+            node.getParent().setRight(child);
+        }
+        child.parent = node.parent;
+        if (node.isColor() == BLACK) {
+            if (child.isColor() == RED) {
+                child.setColor(BLACK);
+            } else {
+                //这个时候实际上子节点已经在原来的父节点的位置上
+                deleteCase(child);
+            }
+        }
+        node = null;
     }
 
+    private void deleteCase(RBNode p) {
+        if (p.parent == null) {
+            p.setColor(BLACK);
+            return;
+        }
+        if (p.getBrother().isColor() == RED) {
+            p.parent.setColor(RED);
+            p.getBrother().setColor(BLACK);
+            if (p.getParent().getLeft() == p) {
+                //p是左儿子 p是黑色 p的爸爸是黑色
+                totateLeft(p.parent);
+            } else {
+                totateRight(p.parent);
+            }
+        } else {
+            if (p.getBrother().getLeft().isColor() == BLACK && p.getBrother().getRight().isColor() == BLACK) {
+                p.getBrother().setColor(RED);
+                deleteCase(p.getParent());
+            } else {
+                if (p.getBrother().isColor() == BLACK
+                        && p.getBrother().getLeft().isColor()  == BLACK
+                        && p.getBrother().getRight().isColor() == BLACK
+                        && p.parent.isColor() == RED) {
+                    p.getBrother().color = RED;
+                    p.getParent().color = BLACK;
+                } else {
+                    if (p == p.getParent().getLeft() &&
+                            p.getBrother().getLeft().isColor() == RED &&
+                            p.getBrother().getRight().isColor() == BLACK
+
+                    ) {
+                        p.getBrother().color = RED;
+                        p.getBrother().getLeft().color = BLACK;
+                        totateRight(p.getBrother());
+                    } else if (
+                            p == p.getParent().getRight() &&
+                                    p.getBrother().getLeft().isColor() == BLACK &&
+                                    p.getBrother().getRight().isColor() == RED
+
+                    ) {
+                        p.getBrother().color = RED;
+                        p.getBrother().getRight().color = BLACK;
+                        totateLeft(p.getBrother());
+                    } else {
+                        RBNode s = p.getBrother();
+                        s.color = p.parent.color;
+                        p.parent.color = BLACK;
+
+                    }
+                    if(p==p.getParent().getLeft()){
+                        p.getRight().color=BLACK;
+                        totateLeft(p.getParent());
+                    }else{
+                        p.left.color=BLACK;
+                        totateRight(p.getParent());
+                    }
+
+                }
+            }
+        }
+
+    }
 
 
     RBNode findMin(RBNode a) {
