@@ -9,5 +9,8 @@
         <module name="suanfa" />
       </profile>
     </annotationProcessing>
+    <bytecodeTargetLevel>
+      <module name="suanfa" target="1.8" />
+    </bytecodeTargetLevel>
   </component>
 </project>
